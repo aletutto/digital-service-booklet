@@ -1,2 +1,3 @@
-# digital-service-booklet
-Implementierung eines digitalen Serviceheftes auf Basis von Hyperledger Composer
+# serviceheft
+
+Implementierung eines Digitalen Serviceheftes auf Basis der Blockchain-Technologie Hyperledger

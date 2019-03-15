@@ -1,0 +1,39 @@
+namespace org.serviceheft.teilnehmer
+
+abstract participant Akteur {
+  o Adresse   adresse
+  o String    telefon // Bei Dominik Integer
+  o String    email
+}
+
+participant Werkstatt identified by werkstattCode extends Akteur {
+  o String          werkstattCode
+  o String          werkstattName
+  o Geschaeftsform  geschaeftsform
+}
+
+participant Kunde identified by kundenNr extends Akteur {
+  o String    kundenNr
+  o String    vorname // Bei Dominik nur Name
+  o String    nachname
+  o DateTime  geburtsdatum
+}
+
+concept Adresse {
+  o String  strasse
+  o String  nummer
+  o Integer plz
+  o String  ort
+}
+
+enum Geschaeftsform {
+  o Einzelunternehmung
+  o GbR
+  o Eingetragener_Kaufmann
+  o OHG
+  o KG
+  o GmbH
+  o UG
+  o AG
+  o GmbH_Co_KG
+}

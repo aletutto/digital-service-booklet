@@ -1,0 +1,175 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+rule NetworkAdminAllgemein {
+    description: "Gebe dem Business Network Administrator generellen Zugriff auf das System"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule NetworkAdminKunde {
+    description: "Gebe dem Business Network Administrator lesenden Zugriff auf die Kunden"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: READ
+    resource: "org.serviceheft.teilnehmer.Kunde"
+    action: ALLOW
+}
+
+rule NetworkAdminWerkstatt {
+    description: "Gebe dem Business Network Administrator vollen Zugriff auf die Werkstätten"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.serviceheft.teilnehmer.Werkstatt"
+    action: ALLOW
+}
+
+rule NetworkAdminFahrzeug {
+    description: "Gebe dem Business Network Administrator lesenden Zugriff auf die Fahrzeuge"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: READ
+    resource: "org.serviceheft.fahrzeug.Fahrzeug"
+    action: ALLOW
+}
+
+rule NetworkAdminInspektion {
+    description: "Gebe dem Business Network Administrator lesenden Zugriff auf die Inspektionen"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: READ
+    resource: "org.serviceheft.inspektion.Inspektion"
+    action: ALLOW
+}
+
+rule KundeZugriffHistorie {
+  description: "Gebe dem Kunden lesenden Zugriff auf seine Transaktionshistorie"
+  participant(p): "org.serviceheft.teilnehmer.Kunde"
+  operation: READ
+  resource(r): "org.hyperledger.composer.system.HistorianRecord"
+  condition: (r.participantInvoking.getFullyQualifiedIdentifier() != p.getFullyQualifiedIdentifier())
+  action: DENY
+}
+
+rule KundenZugriffAllgemein {
+    description: "Gebe den Kunden generellen Zugriff auf das System"
+    participant: "org.serviceheft.teilnehmer.Kunde"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule KundenZugriffKunde {
+    description: "Gebe den Kunden lesenden Zugriff auf seinen eigenen Kunden Daten"
+    participant(p): "org.serviceheft.teilnehmer.Kunde"
+    operation: READ, UPDATE
+    resource(r): "org.serviceheft.teilnehmer.Kunde"
+    condition: (p.getIdentifier() == r.getIdentifier())
+    action: ALLOW
+}
+
+rule KundenZugriffFahrzeug {
+    description: "Gebe den Kunden lesenden Zugriff auf seine Fahrzeuge"
+    participant(p): "org.serviceheft.teilnehmer.Kunde"
+    operation: READ
+    resource(r): "org.serviceheft.fahrzeug.Fahrzeug"
+    condition: (p.getIdentifier() == r.besitzer.getIdentifier())
+    action: ALLOW
+}
+
+rule KundenZugriffWerkstatt {
+    description: "Gebe den Kunden lesenden Zugriff auf Werkstätte"
+    participant: "org.serviceheft.teilnehmer.Kunde"
+    operation: READ
+    resource: "org.serviceheft.teilnehmer.Werkstatt"
+    action: ALLOW
+}
+
+rule KundenZugriffDigitaleUnterschrift {
+    description: "Gebe den Kunden Zugriff auf die Transaktion Digitale Unterschrift setzten"
+    participant: "org.serviceheft.teilnehmer.Kunde"
+    operation: CREATE, UPDATE
+    resource: "org.serviceheft.inspektion.*"
+  	transaction(t): "org.serviceheft.inspektion.DigitaleUnterschriftSetzen"
+    condition: (t.unterschrift === true)
+    action: ALLOW
+}
+
+rule KundenZugriffInspektion {
+    description: "Gebe den Kunden lesenden Zugriff auf seine Inspektionen"
+    participant(p): "org.serviceheft.teilnehmer.Kunde"
+    operation: READ
+    resource(r): "org.serviceheft.inspektion.Inspektion"
+    condition: (p.getIdentifier() == r.fahrzeug.besitzer.getIdentifier())
+    action: ALLOW
+}
+
+rule WerkstattZugriffHistorie {
+  description: "Gebe der Werkstatt lesenden Zugriff auf seine Transaktionshistorie"
+  participant(p): "org.serviceheft.teilnehmer.Werkstatt"
+  operation: READ
+  resource(r): "org.hyperledger.composer.system.HistorianRecord"
+  condition: (r.participantInvoking.getFullyQualifiedIdentifier() != p.getFullyQualifiedIdentifier())
+  action: DENY
+}
+
+rule WerkstattZugriffAllgemein {
+    description: "Gebe den Werkstätten generellen Zugriff auf das System"
+    participant: "org.serviceheft.teilnehmer.Werkstatt"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule WerkstattZugriffKunde {
+    description: "Gebe den Werkstätten vollen Zugriff auf Kunden"
+    participant: "org.serviceheft.teilnehmer.Werkstatt"
+    operation: ALL
+    resource: "org.serviceheft.teilnehmer.Kunde"
+    action: ALLOW
+}
+
+rule WerkstattZugriffWerkstatt {
+    description: "Gebe den Werkstätten lesenden und aktualisierenden Zugriff auf seine eigene Werkstatt"
+    participant(p): "org.serviceheft.teilnehmer.Werkstatt"
+    operation: READ, UPDATE
+    resource(r): "org.serviceheft.teilnehmer.Werkstatt"
+  	condition: (p.getIdentifier() == r.getIdentifier())
+    action: ALLOW
+}
+
+rule WerkstattZugriffFahrzeuge {
+    description: "Gebe den Werkstätten vollen Zugriff auf alle Fahrzeuge"
+    participant: "org.serviceheft.teilnehmer.Werkstatt"
+    operation: ALL
+    resource: "org.serviceheft.fahrzeug.Fahrzeug"
+    action: ALLOW
+}
+
+rule WerkstattZugriffInspektion {
+    description: "Gebe den Werkstätten Zugriff auf alle von ihm durchgeführten Inspektionen"
+    participant(p): "org.serviceheft.teilnehmer.Werkstatt"
+    operation: READ, UPDATE, DELETE
+    resource(r): "org.serviceheft.inspektion.Inspektion"
+  	condition: (p.getIdentifier() == r.werkstatt.getIdentifier())
+    action: ALLOW
+}
+
+rule WerkstattZugriffInspektionDurchfuehren {
+    description: "Gebe den Werkstätten Zugriff um eine Inspektionen durchzuführen"
+    participant: "org.serviceheft.teilnehmer.Werkstatt"
+    operation: CREATE
+    resource: "org.serviceheft.inspektion.*"
+  	transaction: "org.serviceheft.inspektion.InspektionDurchfuehren"
+    action: ALLOW
+}

@@ -1,0 +1,41 @@
+namespace org.serviceheft.inspektion
+
+import org.serviceheft.fahrzeug.Fahrzeug
+import org.serviceheft.teilnehmer.Werkstatt
+
+asset Inspektion identified by inspektionNr {
+  o String            inspektionNr
+  --> Fahrzeug        fahrzeug
+  --> Werkstatt       werkstatt
+  o DateTime          datum
+  o String            bearbeiter
+  o Material[]        materialien
+  o Dienstleistung[]  dienstleistungen
+  o Boolean           istUnterschrieben
+}
+
+concept Dienstleistung {
+  o String  dienstleistungNr
+  o String  bezeichnung
+  o String  menge
+}
+
+concept Material {
+  o String  materialNr
+  o String  bezeichnung
+  o String  menge
+}
+
+transaction InspektionDurchfuehren {
+  o String            inspektionNr
+  --> Fahrzeug        fahrzeug
+  o String            bearbeiter
+  o DateTime          datum
+  o Material[]        materialien
+  o Dienstleistung[]  dienstleistungen
+}
+
+transaction DigitaleUnterschriftSetzen {
+  --> Inspektion   inspektion
+  o Boolean        unterschrift
+}

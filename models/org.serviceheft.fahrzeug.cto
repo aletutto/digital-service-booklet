@@ -1,0 +1,25 @@
+namespace org.serviceheft.fahrzeug
+
+import org.serviceheft.teilnehmer.Kunde
+
+asset Fahrzeug identified by fahrzeugID {
+  o String      fahrzeugID
+  --> Kunde     besitzer
+  o String      hersteller
+  o String      modell
+  o Garantie    garantie
+  o Antrieb     antrieb
+}
+
+concept Garantie {
+  o DateTime beginn
+  o DateTime end
+}
+
+enum Antrieb {
+  o Benzin
+  o Diesel
+  o Gas
+  o Elektro
+  o Hybrid
+}
